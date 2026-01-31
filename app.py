@@ -145,7 +145,7 @@ with col1:
     st.markdown("💡 **Built with Streamlit & ML**")
 
 with col2:
-    st.markdown("<h4 style='text-align:center; color:#4B0082;'>🏡 House Price Predictor</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align:center; color:#4B0082;'>🏥 Diabetes Prediction </h4>", unsafe_allow_html=True)
 
 with col3:
     st.markdown("👨‍💻 **Project by [Vanshuu](https://github.com/sumitkumar1233edeedad)**", unsafe_allow_html=True)
