@@ -74,7 +74,7 @@ with col1:
 # PREDICTION SECTION
 # =====================================
 if st.button("🔍 Run Prediction", use_container_width=True):
-
+     
     scaled = scaler.transform(input_data)
     pred = model.predict(scaled)[0]
     prob = model.predict_proba(scaled)[0][1]
@@ -89,6 +89,7 @@ if st.button("🔍 Run Prediction", use_container_width=True):
                 st.error("⚠️ High Diabetes Risk Detected")
             else:
                 st.success("✅ Low Diabetes Risk")
+                st.balloons()
 
             st.metric(
                 label="Risk Probability",
