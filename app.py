@@ -137,14 +137,18 @@ else:
 # =====================================
 # FOOTER
 # =====================================
+# Footer with columns and icons
 st.divider()
+col1, col2, col3 = st.columns([1,2,1])
 
-st.markdown("""
-<div style='text-align:center; font-size:14px; color:gray;'>
-Built with Streamlit • ML Diabetes Prediction Project<br>
-Developed by <b>Vanshuu</b><br>
-<a href="https://github.com/sumitkumar1233edeedad" target="_blank">
-GitHub Profile
-</a>
-</div>
-""", unsafe_allow_html=True)
+with col1:
+    st.markdown("💡 **Built with Streamlit & ML**")
+
+with col2:
+    st.markdown("<h4 style='text-align:center; color:#4B0082;'>🏡 House Price Predictor</h4>", unsafe_allow_html=True)
+
+with col3:
+    st.markdown("👨‍💻 **Project by [Vanshuu](https://github.com/sumitkumar1233edeedad)**", unsafe_allow_html=True)
+
+# Optional: Add a thank you note or social links
+st.markdown("<p style='text-align:center; color:gray;'>✨ Thanks for visiting! Follow me for more ML projects 🚀</p>", unsafe_allow_html=True)
