@@ -4,6 +4,8 @@
 
 This project predicts whether a person is **diabetic or non-diabetic** based on medical attributes such as glucose level, blood pressure, BMI, and age. It is a **beginner-friendly machine learning classification project** that demonstrates the complete ML pipeline and includes a **Streamlit web application** for real-time predictions.
 
+💻 **Live Demo (Streamlit App):** [Click Here](https://clinical-diabetes-predictor.streamlit.app/)
+
 ---
 
 ## 🎯 Objective
