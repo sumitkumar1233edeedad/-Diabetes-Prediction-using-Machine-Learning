@@ -1,34 +1,45 @@
 import streamlit as st
 import numpy as np
-import joblib
 import pandas as pd
+import joblib
 import matplotlib.pyplot as plt
 
-# -------------------------
-# Page Config
-# -------------------------
+# =====================================
+# PAGE CONFIG
+# =====================================
 st.set_page_config(
     page_title="Diabetes Risk Predictor",
     page_icon="🩺",
     layout="wide"
 )
 
-# -------------------------
-# Load Assets
-# -------------------------
-model = joblib.load("diabetes_model.pkl")
-scaler = joblib.load("scaler.pkl")
+# =====================================
+# LOAD MODEL + SCALER (SAFE LOAD)
+# =====================================
+@st.cache_resource
+def load_assets():
+    try:
+        model = joblib.load("Diabetes.pkl")
+        scaler = joblib.load("scaled_diabetes.pkl")
+        return model, scaler
+    except Exception as e:
+        st.error("❌ Model or scaler file not found.")
+        st.stop()
 
-# -------------------------
-# Header
-# -------------------------
+model, scaler = load_assets()
+
+# =====================================
+# HEADER
+# =====================================
 st.title("🩺 Diabetes Risk Prediction System")
-st.markdown("AI-powered clinical risk screening tool")
+st.markdown("### AI-Powered Clinical Risk Screening Tool")
 
-# -------------------------
-# Sidebar Input Form
-# -------------------------
-st.sidebar.header("Patient Parameters")
+st.info("Enter patient clinical parameters in the sidebar and click **Run Prediction**")
+
+# =====================================
+# SIDEBAR INPUTS
+# =====================================
+st.sidebar.header("🧾 Patient Parameters")
 
 preg = st.sidebar.slider("Pregnancies", 0, 20, 1)
 glucose = st.sidebar.slider("Glucose Level", 50, 200, 120)
@@ -41,11 +52,12 @@ age = st.sidebar.slider("Age", 1, 100, 30)
 
 input_data = np.array([[preg, glucose, bp, skin, insulin, bmi, dpf, age]])
 
-# -------------------------
-# Layout Columns
-# -------------------------
-col1, col2 = st.columns(2)
+# =====================================
+# MAIN LAYOUT
+# =====================================
+col1, col2 = st.columns([1, 1])
 
+# ---------- INPUT SUMMARY ----------
 with col1:
     st.subheader("📋 Input Summary")
 
@@ -56,9 +68,11 @@ with col1:
 
     st.dataframe(df_input, use_container_width=True)
 
-# -------------------------
-# Prediction
-# -------------------------
+    st.caption("Verify values before running prediction")
+
+# =====================================
+# PREDICTION SECTION
+# =====================================
 if st.button("🔍 Run Prediction", use_container_width=True):
 
     scaled = scaler.transform(input_data)
@@ -68,34 +82,69 @@ if st.button("🔍 Run Prediction", use_container_width=True):
     with col2:
         st.subheader("📊 Prediction Result")
 
-        if pred == 1:
-            st.error("⚠️ High Diabetes Risk")
-        else:
-            st.success("✅ Low Diabetes Risk")
+        result_box = st.container(border=True)
 
-        st.metric("Risk Probability", f"{prob:.2%}")
+        with result_box:
+            if pred == 1:
+                st.error("⚠️ High Diabetes Risk Detected")
+            else:
+                st.success("✅ Low Diabetes Risk")
 
-        st.progress(float(prob))
+            st.metric(
+                label="Risk Probability",
+                value=f"{prob:.2%}"
+            )
 
-# -------------------------
-# Feature Importance
-# -------------------------
+            st.write("Confidence Level")
+            st.progress(float(prob))
+
+            if prob > 0.7:
+                st.warning("Recommendation: Clinical follow-up advised")
+            elif prob > 0.4:
+                st.info("Moderate risk — lifestyle monitoring suggested")
+            else:
+                st.success("Low predicted clinical risk")
+
+# =====================================
+# FEATURE IMPORTANCE
+# =====================================
 st.divider()
 st.subheader("📈 Model Feature Importance")
 
 if hasattr(model, "feature_importances_"):
+
     feat_names = [
         "Pregnancies","Glucose","BloodPressure","SkinThickness",
         "Insulin","BMI","DPF","Age"
     ]
 
-    imp = pd.Series(model.feature_importances_, index=feat_names).sort_values()
+    importance = pd.Series(
+        model.feature_importances_,
+        index=feat_names
+    ).sort_values()
 
-    fig, ax = plt.subplots()
-    imp.plot(kind="barh", ax=ax)
+    fig, ax = plt.subplots(figsize=(8,5))
+    importance.plot(kind="barh", ax=ax)
+    ax.set_title("Feature Impact on Model Decision")
+    ax.set_xlabel("Importance Score")
+
     st.pyplot(fig)
 
-# -------------------------
-# Footer
-# -------------------------
-st.caption("Built with Streamlit • ML Diabetes Project")
+else:
+    st.info("Model does not support feature importance")
+
+# =====================================
+# FOOTER
+# =====================================
+st.divider()
+
+st.markdown("""
+<div style='text-align:center; font-size:14px; color:gray;'>
+Built with Streamlit • ML Diabetes Prediction Project<br>
+Developed by <b>Vanshuu</b><br>
+<a href="https://github.com/sumitkumar1233edeedad" target="_blank">
+GitHub Profile
+</a>
+</div>
+""", unsafe_allow_html=True)
+g
